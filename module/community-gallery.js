@@ -36,8 +36,9 @@ Hooks.on(`renderDocumentDirectory`, (app, html, context, options) => {
     const data = foundry.applications.ux.TextEditor.implementation.getDragEventData(event);
     if (data.type === 'CommunityGalleryEntry' && data.subtype === app.documentName) {
       const entry = await resolveDropData(data);
-      if (entry)
-        app.documentClass.createDocuments([foundry.utils.deepClone(entry.data)], { pack: app.collection.collection });
+      if (!entry) return;
+      if (!verifyDependencies(entry)) return;
+      app.documentClass.createDocuments([foundry.utils.deepClone(entry.data)], { pack: app.collection.collection });
     }
   });
 });
@@ -50,6 +51,7 @@ Hooks.on('dropCanvasData', async (canvas, data, event) => {
   if (type === 'CommunityGalleryEntry' && SUPPORTED_PLACEABLES.has(subtype)) {
     const entry = await resolveDropData(data);
     if (!entry) return;
+    if (!verifyDependencies(entry)) return;
 
     const createData = foundry.utils.deepClone(entry.data);
 
@@ -92,7 +94,6 @@ Hooks.on('dropCanvasData', async (canvas, data, event) => {
     if (event.altKey) createData.hidden = true;
 
     const cls = foundry.utils.getDocumentClass(subtype);
-    console.log(cls, createData, canvas);
     cls.create(createData, { parent: canvas.scene });
   }
 });
@@ -107,7 +108,7 @@ Hooks.on('getHeaderControlsDocumentSheetV2', (sheet, controls) => {
       label: 'Community Gallery',
       icon: 'fa-fw fa-solid fa-cloud',
       onClick: () => {
-        gallery().then((Gallery) => Gallery.browse({ filter: '@' + docName }));
+        gallery().then((Gallery) => Gallery.browse({ filter: '@' + documentName }));
       },
     },
     {
@@ -134,11 +135,7 @@ Hooks.on('getHeaderControlsDocumentSheetV2', (sheet, controls) => {
 
 // Retrieve gallery API
 async function gallery() {
-  // TODO
-  CONFIG.CommunityGalleryDebug = true;
-  const { default: Gallery } = await import('http://localhost:30000/foundry-gallery/public/foundry-app/gallery.js');
-
-  // const { default: Gallery } = await import('https://gallery.aedif.net/foundry-app/gallery.js');
+  const { default: Gallery } = await import('https://gallery.aedif.net/foundry-app/gallery.js');
   return Gallery;
 }
 
@@ -146,6 +143,26 @@ async function gallery() {
 async function resolveDropData(data) {
   const Gallery = await gallery();
   return data.entry ?? (await Gallery.resolve(data.id));
+}
+
+function verifyDependencies(entry) {
+  const missingDependencyWarnings = [];
+  if (entry.system.dependency && game.system.id !== entry.system.id) {
+    missingDependencyWarnings.push('Game system: ' + game.system.id);
+  }
+  for (const id of entry.dependencies) {
+    if (!game.modules.get(id)?.active) {
+      missingDependencyWarnings.push('Module: ' + id);
+    }
+  }
+  if (missingDependencyWarnings.length) {
+    ui.notifications.warn('Gallery Entry contains missing dependencies.');
+    missingDependencyWarnings.forEach((warn) => {
+      ui.notifications.warn(warn);
+    });
+    return false;
+  }
+  return true;
 }
 
 /**
@@ -227,17 +244,8 @@ class DataTransformer {
         width = data.shape.width;
         height = data.shape.height;
       } else if (documentName === 'Token') {
-        if (data.flags?.[MODULE_ID]?.width != null) {
-          width = data.flags[MODULE_ID].width;
-        } else {
-          width = data.width;
-        }
-
-        if (data.flags?.[MODULE_ID]?.height != null) {
-          height = data.flags[MODULE_ID].height;
-        } else {
-          height = data.height;
-        }
+        width = data.width;
+        height = data.height;
 
         width *= canvas.dimensions.size;
         height *= canvas.dimensions.size;
