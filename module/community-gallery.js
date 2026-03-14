@@ -24,7 +24,8 @@ const SUPPORTED_DOCUMENTS = new Set([
   'Region',
 ]);
 
-// SideBar Directory drop listeners
+// Document Directory drop listeners
+// Gallery entries dropped on directories will be created as documents within them
 Hooks.on(`renderDocumentDirectory`, (app, html, context, options) => {
   if (!DRAG_DROP_DIRECTORIES.has(app.documentName)) return;
 
@@ -41,6 +42,8 @@ Hooks.on(`renderDocumentDirectory`, (app, html, context, options) => {
   });
 });
 
+// Canvas Drop hook
+// Entries subtyped as placeable documents will be created on canvas drop
 Hooks.on('dropCanvasData', async (canvas, data, event) => {
   const { type, subtype } = data;
   let { x, y } = data;
@@ -94,7 +97,7 @@ Hooks.on('dropCanvasData', async (canvas, data, event) => {
   }
 });
 
-// Insert Upload/Browse header controls for supported documents
+// Supported document sheets will have Upload/Browse Gallery button added to them
 Hooks.on('getHeaderControlsDocumentSheetV2', (sheet, controls) => {
   const documentName = sheet.documentName ?? sheet.document?.documentName;
   if (!SUPPORTED_DOCUMENTS.has(documentName)) return;
@@ -129,6 +132,7 @@ Hooks.on('getHeaderControlsDocumentSheetV2', (sheet, controls) => {
   );
 });
 
+// Retrieve gallery API
 async function gallery() {
   // TODO
   CONFIG.CommunityGalleryDebug = true;
@@ -138,11 +142,15 @@ async function gallery() {
   return Gallery;
 }
 
+// Resolved drag/drop data as a full Gallery entry
 async function resolveDropData(data) {
   const Gallery = await gallery();
   return data.entry ?? (await Gallery.resolve(data.id));
 }
 
+/**
+ * Data processing utilities
+ */
 class DataTransformer {
   static retrieveCleanDocumentData(document) {
     const data = document.toObject();

@@ -5,25 +5,68 @@
 
 # Foundry Community Gallery
 
-A supplementary module to https://gallery.aedif.net/
+A supplementary module to https://gallery.aedif.net/, a gallery of user submitted data structures.
 
-- ## Register drop-listeners
-- Insert controls to document sheets
+Adds support for upload and browsing of the following documents:
+
+- RollTable
+- Macro
+- Item
+- Cards
+- JournalEntry
+- Actor
+- AmbientLight
+- Tile
+- Drawing
+- MeasuredTemplate
+- Token
+- AmbientSound
+- Region
+
+Each of these document sheets will have header controls added to open and upload form and browser.
+
+In addition drag and drop from the gallery to the canvas or document directory will result in document creation.
 
 ### Developers
 
-If you wish to simply render the browse and submit forms this module is not necessary.
+This module is not a dependency if you wish to simply render the browser and submit forms.
 
-API can be accessed dynamically via:
+API can be imported dynamically.
+
+Bellow is an example of the browser and submit form being opened for the [TokenMagic FX](https://foundryvtt.com/packages/tokenmagic/) module's effect presets.
 
 ```js
-	const { default: Gallery } = await import('https://gallery.aedif.net/foundry-app/gallery.js');
-	Gallery.browse({ filter: '@"TMFX Preset"' });
-  Gallery.submit({
-		title: , // optional
-		data: preset, // optional
-		tags: Array.from(tags), // optional
-		dependencies: ['tokenmagic'], // optional
-		type: 'TMFX Preset', // optional
-	});
+const { default: Gallery } = await import('https://gallery.aedif.net/foundry-app/gallery.js');
+
+Gallery.browse({ filter: '@"TMFX Preset"' });
+Gallery.submit({
+  window: {
+    title: 'TMFX Filter Gallery',
+  },
+  data: [ ... ],
+  tags: ['xfire', 'bloom'],
+  dependencies: ['tokenmagic'],
+  type: 'TMFX Preset',
+});
 ```
+
+`Gallery.browse` and `Gallery.submit` accept all the usual `ApplicationV2` options in addition to:
+
+### Gallery.browse
+
+- `filter` accepts a string used to filter gallery entries
+  - `@` prefix for type search
+  - `#` prefix for tag search
+  - `AND`/`OR`/`()` can be used to build complex filter (e.g. `red AND ( @AmbientLight OR #crimson )`)
+
+\* _This filter is not visible within the opened app_
+
+### Gallery.submit
+
+- `title`
+- `author`
+- `description`
+- `tags` array of string tags
+- `data` data to be submitted
+- `type` type associated with the `data`
+- `dependencies` game system and module IDs which this submission is dependent on
