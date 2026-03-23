@@ -23,13 +23,13 @@ Adds support for upload and browsing of the following documents:
 - AmbientSound
 - Region
 
-Each of these document sheets will have header controls added to open and upload form and browser.
+Each of these document sheets will have header controls added to open the Upload & Browser forms.
 
 In addition drag and drop from the gallery to the canvas or document directory will result in document creation.
 
-### Developers
+## Developers
 
-This module is not a dependency if you wish to simply render the browser and submit forms.
+This module is not a dependency if you wish to render the browser and submit forms.
 
 API can be imported dynamically.
 
@@ -38,11 +38,12 @@ Bellow is an example of the browser and submit form being opened for the [TokenM
 ```js
 const { default: Gallery } = await import('https://gallery.aedif.net/foundry-app/gallery.js');
 
-Gallery.browse({ filter: '@"TMFX Preset"' });
-Gallery.submit({
+Gallery.browse({
   window: {
     title: 'TMFX Filter Gallery',
   },
+  filter: '@"TMFX Preset"' });
+Gallery.submit({
   data: [ ... ],
   tags: ['xfire', 'bloom'],
   dependencies: ['tokenmagic'],
@@ -55,9 +56,9 @@ Gallery.submit({
 ### Gallery.browse
 
 - `filter` accepts a string used to filter gallery entries
-  - `@` prefix for type search
-  - `#` prefix for tag search
-  - `AND`/`OR`/`()` can be used to build complex filter (e.g. `red AND ( @AmbientLight OR #crimson )`)
+    - `@` prefix for type search
+    - `#` prefix for tag search
+    - `AND`/`OR`/`()` can be used to build complex filters (e.g. `red AND ( @AmbientLight OR #crimson )`)
 
 \* _This filter is not visible within the opened app_
 
@@ -70,3 +71,24 @@ Gallery.submit({
 - `data` data to be submitted
 - `type` type associated with the `data`
 - `dependencies` game system and module IDs which this submission is dependent on
+
+A slightly flickering candle light.
+5ft Bright - 10ft Dim
+
+### Drop Event/Data
+
+Gallery drop events are encoded as:
+`{ type: "CommunityGalleryEntry", subtype: "{{entry_type}}", src: {{url}} }`
+
+Listener/Handler Example:
+
+```js
+html.addEventListener('drop', (event) => {
+   const { type, subtype, src } = foundry.applications.ux.TextEditor.implementation.getDragEventData(event);
+   if (type === 'CommunityGalleryEntry' && subtype === 'SomeType') {
+      const response = await fetch(src);
+      const entry = await response.json();
+      console.log(entry);
+    }
+});
+```
