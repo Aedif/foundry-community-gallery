@@ -1,7 +1,7 @@
 {
   "id": "community-gallery",
   "title": "Community Gallery",
-  "description": "A supplementary module to Foundry Community Gallery (https://gallery.aedif.net/)",
+  "description": "A supplementary module to Foundry Community Gallery website (https://gallery.aedif.net/)",
   "version": "1.0.0",
   "download": "https://github.com/Aedif/foundry-community-gallery/releases/download/1.0.0/community-gallery.zip",
   "url": "https://github.com/Aedif/foundry-community-gallery",
@@ -16,5 +16,13 @@
     "minimum": 13,
     "verified": "13"
   },
-  "esmodules": ["community-gallery.js"]
+  "esmodules": ["community-gallery.js"],
+  "languages": [
+    {
+      "lang": "en",
+      "name": "English",
+      "path": "lang/en.json",
+      "flags": {}
+    }
+  ]
 }

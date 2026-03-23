@@ -1,7 +1,8 @@
+import { SceneControlButtonSettings } from './apps/sceneControlButtons.js';
 import { GalleryUtils, DataTransformer } from './utils.js';
 
-const DRAG_DROP_DIRECTORIES = new Set(['RollTable', 'Macro', 'Item', 'Cards', 'JournalEntry', 'Actor']);
-const SUPPORTED_PLACEABLES = new Set([
+const DRAG_DROP_DIRECTORIES = ['RollTable', 'Macro', 'Item', 'Cards', 'JournalEntry', 'Actor'];
+export const SUPPORTED_PLACEABLES = [
     'AmbientLight',
     'Tile',
     'Drawing',
@@ -9,31 +10,19 @@ const SUPPORTED_PLACEABLES = new Set([
     'Token',
     'AmbientSound',
     'Region',
-]);
-const SUPPORTED_DOCUMENTS = new Set([
-    'RollTable',
-    'Macro',
-    'Item',
-    'Cards',
-    'JournalEntry',
-    'Actor',
-    'AmbientLight',
-    'Tile',
-    'Drawing',
-    'MeasuredTemplate',
-    'Token',
-    'AmbientSound',
-    'Region',
-]);
+];
+const SUPPORTED_DOCUMENTS = [...DRAG_DROP_DIRECTORIES, ...SUPPORTED_PLACEABLES];
 
 /**
  * Register supporting hooks for core foundry document sheets
  */
 export function registerCoreSupport() {
+    SceneControlButtonSettings.register();
+
     // Document Directory drop listener
     // Gallery entries dropped on directories will be created as documents within them
     Hooks.on(`renderDocumentDirectory`, (app, html, context, options) => {
-        if (!DRAG_DROP_DIRECTORIES.has(app.documentName)) return;
+        if (!DRAG_DROP_DIRECTORIES.includes(app.documentName)) return;
 
         if (app._communityGalleryDropListener) return;
         app._communityGalleryDropListener = true;
@@ -56,7 +45,7 @@ export function registerCoreSupport() {
     Hooks.on('dropCanvasData', async (canvas, data, event) => {
         const { type, subtype } = data;
         let { x, y } = data;
-        if (type === 'CommunityGalleryEntry' && SUPPORTED_PLACEABLES.has(subtype)) {
+        if (type === 'CommunityGalleryEntry' && SUPPORTED_PLACEABLES.includes(subtype)) {
             const entry = await GalleryUtils.resolveDropData(data);
             if (!entry) return;
             if (!GalleryUtils.verifyDependencies(entry)) return;
@@ -109,7 +98,7 @@ export function registerCoreSupport() {
     // Supported document sheets will have 'Upload' and 'Browse Gallery' buttons added to them
     Hooks.on('getHeaderControlsDocumentSheetV2', (sheet, controls) => {
         const documentName = sheet.documentName ?? sheet.document?.documentName;
-        if (!SUPPORTED_DOCUMENTS.has(documentName)) return;
+        if (!SUPPORTED_DOCUMENTS.includes(documentName)) return;
 
         controls.push(
             {

@@ -1,0 +1,11 @@
+<div>
+    <p>{{localize "COMMUNITY_GALLERY.SceneControls.SettingHint"}}</p>
+    {{#each layers}}
+    <div class="form-group">
+        <label>{{@key}}</label>
+        <div class="form-fields">
+            <input type="checkbox" name="{{@key}}" {{checked this}}>
+        </div>
+    </div>
+    {{/each}}
+</div>

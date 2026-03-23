@@ -1,0 +1,9 @@
+{
+    "COMMUNITY_GALLERY": {
+        "SceneControls": {
+            "SettingLabel": "Scene Control Buttons",
+            "SettingHint": "Enable/Disable gallery button insertion into scene controls.",
+            "ControlTooltip": "Community Gallery"
+        }
+    }
+}

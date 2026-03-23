@@ -22,6 +22,8 @@ export class DataTransformer {
                 delete ef._stats;
                 DataTransformer.cleanFlags(ef);
             });
+        } else if (document.documentName === 'Drawing') {
+            delete data.author;
         }
         // Cleanup flags of in-active modules
         DataTransformer.cleanFlags(data);

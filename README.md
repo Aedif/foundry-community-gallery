@@ -1,7 +1,7 @@
 ![GitHub Latest Version](https://img.shields.io/github/v/release/Aedif/foundry-community-gallery?sort=semver)
-![GitHub Latest Release](https://img.shields.io/github/downloads/Aedif/foundry-community-gallery/latest/foundry-community-gallery.zip)
-![GitHub All Releases](https://img.shields.io/github/downloads/Aedif/foundry-community-gallery/foundry-community-gallery.zip)
-[![Forge Installs](https://img.shields.io/badge/dynamic/json?label=Forge%20Installs&query=package.installs&suffix=%25&url=https%3A%2F%2Fforge-vtt.com%2Fapi%2Fbazaar%2Fpackage%2Ffoundry-community-gallery)](https://forge-vtt.com/bazaar#package=foundry-community-gallery)
+![GitHub Latest Release](https://img.shields.io/github/downloads/Aedif/foundry-community-gallery/latest/community-gallery.zip)
+![GitHub All Releases](https://img.shields.io/github/downloads/Aedif/foundry-community-gallery/community-gallery.zip)
+[![Forge Installs](https://img.shields.io/badge/dynamic/json?label=Forge%20Installs&query=package.installs&suffix=%25&url=https%3A%2F%2Fforge-vtt.com%2Fapi%2Fbazaar%2Fpackage%2Fcommunity-gallery)](https://forge-vtt.com/bazaar#package=community-gallery)
 
 # Foundry Community Gallery
 
@@ -25,7 +25,9 @@ Adds support for upload and browsing of the following documents:
 
 Each of these document sheets will have header controls added to open the Upload & Browser forms.
 
-In addition drag and drop from the gallery to the canvas or document directory will result in document creation.
+Placeables such as Tiles and Ambient Lights will also have layer control buttons added to open the gallery browsers.
+
+Drag and drop from the gallery to the canvas or document directory will result in document creation.
 
 ## Developers
 
@@ -71,9 +73,6 @@ Gallery.submit({
 - `data` data to be submitted
 - `type` type associated with the `data`
 - `dependencies` game system and module IDs which this submission is dependent on
-
-A slightly flickering candle light.
-5ft Bright - 10ft Dim
 
 ### Drop Event/Data
 
