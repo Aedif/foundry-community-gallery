@@ -23,11 +23,21 @@ Adds support for upload and browsing of the following documents:
 - AmbientSound
 - Region
 
-Each of these document sheets will have header controls added to open the Upload & Browser forms.
+The sheets/forms of these documents will have header controls added to them to open an upload form to allow document submission to the gallery:
 
-Placeables such as Tiles and Ambient Lights will also have layer control buttons added to open the gallery browsers.
+<img width="auto" height="512" alt="image" src="https://github.com/user-attachments/assets/ed409128-530c-477a-b41e-a75648ac0b52" />
 
-Drag and drop from the gallery to the canvas or document directory will result in document creation.
+Placeables such as Tiles and Ambient Lights will be inserted with a button to open up the gallery browser:
+
+<img width="307" height="250" alt="image" src="https://github.com/user-attachments/assets/4b07ee95-7052-43bf-be33-daa83f82f2e2" />
+
+Sidebar documents will have this button inserted near the search bar:
+
+<img width="auto" height="250" alt="image" src="https://github.com/user-attachments/assets/f510de17-1f2b-4c1f-a7d9-fc46ffca0f97" />
+
+Gallery entries can be dragged on to the canvas or document directory:
+
+https://github.com/user-attachments/assets/e5565250-9e40-4939-bbfd-ec933c5ec004
 
 ## Developers
 
