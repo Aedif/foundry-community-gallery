@@ -1,16 +1,16 @@
-import { SUPPORTED_PLACEABLES } from '../core-support.js';
+import { DRAG_DROP_DIRECTORIES, SUPPORTED_DOCUMENTS, SUPPORTED_PLACEABLES } from '../core-support.js';
 import { GalleryUtils, MODULE_ID } from '../utils.js';
 
 const { HandlebarsApplicationMixin, ApplicationV2 } = foundry.applications.api;
 
-export class SceneControlButtonSettings extends HandlebarsApplicationMixin(ApplicationV2) {
-    static #settingKey = 'sceneControlButtons';
+export class ButtonInsertionSettings extends HandlebarsApplicationMixin(ApplicationV2) {
+    static #settingKey = 'galleryButtonInsertion';
 
     /** @override */
     static DEFAULT_OPTIONS = {
         tag: 'form',
         window: {
-            title: 'Scene Control Buttons',
+            title: game.i18n.localize('COMMUNITY_GALLERY.GalleryButtons.SettingLabel'),
             icon: 'fas fa-cog',
             contentClasses: ['standard-form'],
         },
@@ -19,7 +19,7 @@ export class SceneControlButtonSettings extends HandlebarsApplicationMixin(Appli
         },
         classes: [],
         form: {
-            handler: SceneControlButtonSettings._onSubmit,
+            handler: ButtonInsertionSettings._onSubmit,
             submitOnChange: false,
             closeOnSubmit: true,
         },
@@ -28,7 +28,7 @@ export class SceneControlButtonSettings extends HandlebarsApplicationMixin(Appli
 
     /** @override */
     static PARTS = {
-        layers: { template: `modules/${MODULE_ID}/templates/layers.hbs` },
+        documents: { template: `modules/${MODULE_ID}/templates/documents.hbs` },
         footer: { template: 'templates/generic/form-footer.hbs' },
     };
 
@@ -36,10 +36,10 @@ export class SceneControlButtonSettings extends HandlebarsApplicationMixin(Appli
     async _preparePartContext(partId, context, options) {
         context.partId = partId;
         switch (partId) {
-            case 'layers':
-                const enabledLayers = game.settings.get(MODULE_ID, SceneControlButtonSettings.#settingKey);
-                context.layers = SUPPORTED_PLACEABLES.reduce((obj, p) => {
-                    obj[p] = Boolean(enabledLayers[p]);
+            case 'documents':
+                const enabledDocuments = game.settings.get(MODULE_ID, ButtonInsertionSettings.#settingKey);
+                context.documents = SUPPORTED_DOCUMENTS.reduce((obj, p) => {
+                    obj[p] = Boolean(enabledDocuments[p]);
                     return obj;
                 }, {});
                 break;
@@ -60,10 +60,10 @@ export class SceneControlButtonSettings extends HandlebarsApplicationMixin(Appli
      * Process form data
      */
     static async _onSubmit(event, form, formData) {
-        const currentSettings = game.settings.get(MODULE_ID, SceneControlButtonSettings.#settingKey);
+        const currentSettings = game.settings.get(MODULE_ID, ButtonInsertionSettings.#settingKey);
         game.settings.set(
             MODULE_ID,
-            SceneControlButtonSettings.#settingKey,
+            ButtonInsertionSettings.#settingKey,
             foundry.utils.mergeObject(currentSettings, formData.object),
         );
     }
@@ -76,21 +76,22 @@ export class SceneControlButtonSettings extends HandlebarsApplicationMixin(Appli
             scope: 'world',
             config: false,
             type: Object,
-            default: SUPPORTED_PLACEABLES.reduce((obj, val) => {
+            default: SUPPORTED_DOCUMENTS.reduce((obj, val) => {
                 obj[val] = true;
                 return obj;
             }, {}),
             requiresReload: true,
         });
         game.settings.registerMenu(MODULE_ID, this.#settingKey, {
-            name: game.i18n.localize('COMMUNITY_GALLERY.SceneControls.SettingLabel'),
+            name: game.i18n.localize('COMMUNITY_GALLERY.GalleryButtons.SettingLabel'),
             icon: 'fas fa-cog',
             label: '',
-            hint: game.i18n.localize('COMMUNITY_GALLERY.SceneControls.SettingHint'),
-            type: SceneControlButtonSettings,
+            hint: game.i18n.localize('COMMUNITY_GALLERY.GalleryButtons.SettingHint'),
+            type: ButtonInsertionSettings,
             restricted: true,
         });
 
+        /* Insert browser buttons into the scene layer controls. */
         Hooks.on('getSceneControlButtons', (controls) => {
             const enabledLayers = game.settings.get(MODULE_ID, this.#settingKey);
             const layers = SUPPORTED_PLACEABLES.filter((name) => enabledLayers[name]).map(
@@ -108,7 +109,7 @@ export class SceneControlButtonSettings extends HandlebarsApplicationMixin(Appli
                 options.tools.communityGallery = {
                     name: 'communityGallery',
                     order,
-                    title: game.i18n.localize('COMMUNITY_GALLERY.SceneControls.ControlTooltip'),
+                    title: game.i18n.localize('COMMUNITY_GALLERY.GalleryButtons.ControlTooltip'),
                     icon: 'fa-solid fa-globe',
                     visible: game.user.isGM,
                     active: false,
@@ -120,6 +121,31 @@ export class SceneControlButtonSettings extends HandlebarsApplicationMixin(Appli
                     },
                 };
             }
+        });
+
+        /* Insert browser buttons into the sidebar.  */
+        Hooks.on(`renderDocumentDirectory`, (app, html, context, options) => {
+            if (!DRAG_DROP_DIRECTORIES.includes(app.documentName)) return;
+            if (html.querySelector('.community-gallery-button')) return;
+
+            const enabledDocuments = game.settings.get(MODULE_ID, ButtonInsertionSettings.#settingKey);
+            if (!enabledDocuments[app.documentName]) return;
+
+            const searchEl = html.querySelector('.directory-header search');
+            if (!searchEl) return;
+
+            const button = document.createElement('button');
+            button.type = 'button';
+            button.classList.add('community-gallery-button', 'inline-control', 'icon', 'fa-solid', 'fa-globe');
+            button.dataset.tooltip = game.i18n.localize('COMMUNITY_GALLERY.GalleryButtons.ControlTooltip');
+
+            searchEl.appendChild(button);
+
+            button.addEventListener('click', () => {
+                GalleryUtils.gallery().then((Gallery) => {
+                    Gallery.browse({ filter: '@' + app.documentName });
+                });
+            });
         });
     }
 }

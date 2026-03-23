@@ -1,9 +1,10 @@
 {
     "COMMUNITY_GALLERY": {
-        "SceneControls": {
-            "SettingLabel": "Scene Control Buttons",
-            "SettingHint": "Enable/Disable gallery button insertion into scene controls.",
-            "ControlTooltip": "Community Gallery"
+        "GalleryButtons": {
+            "SettingLabel": "Gallery Buttons",
+            "SettingHint": "Configure gallery button insertion for the supported documents.",
+            "ControlTooltip": "Community Gallery",
+            "SheetUpload": "Upload to Gallery"
         }
     }
 }

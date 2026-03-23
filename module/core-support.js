@@ -1,7 +1,7 @@
-import { SceneControlButtonSettings } from './apps/sceneControlButtons.js';
+import { ButtonInsertionSettings } from './apps/buttonInsertion.js';
 import { GalleryUtils, DataTransformer } from './utils.js';
 
-const DRAG_DROP_DIRECTORIES = ['RollTable', 'Macro', 'Item', 'Cards', 'JournalEntry', 'Actor'];
+export const DRAG_DROP_DIRECTORIES = ['RollTable', 'Macro', 'Item', 'Cards', 'JournalEntry', 'Actor'];
 export const SUPPORTED_PLACEABLES = [
     'AmbientLight',
     'Tile',
@@ -11,13 +11,13 @@ export const SUPPORTED_PLACEABLES = [
     'AmbientSound',
     'Region',
 ];
-const SUPPORTED_DOCUMENTS = [...DRAG_DROP_DIRECTORIES, ...SUPPORTED_PLACEABLES];
+export const SUPPORTED_DOCUMENTS = [...SUPPORTED_PLACEABLES, ...DRAG_DROP_DIRECTORIES];
 
 /**
  * Register supporting hooks for core foundry document sheets
  */
 export function registerCoreSupport() {
-    SceneControlButtonSettings.register();
+    ButtonInsertionSettings.register();
 
     // Document Directory drop listener
     // Gallery entries dropped on directories will be created as documents within them
@@ -100,33 +100,24 @@ export function registerCoreSupport() {
         const documentName = sheet.documentName ?? sheet.document?.documentName;
         if (!SUPPORTED_DOCUMENTS.includes(documentName)) return;
 
-        controls.push(
-            {
-                label: 'Community Gallery',
-                icon: 'fa-fw fa-solid fa-cloud',
-                onClick: () => {
-                    GalleryUtils.gallery().then((Gallery) => Gallery.browse({ filter: '@' + documentName }));
-                },
+        controls.push({
+            label: game.i18n.localize('COMMUNITY_GALLERY.GalleryButtons.SheetUpload'),
+            icon: 'fa-fw fa-solid fa-cloud-arrow-up',
+            onClick: () => {
+                const document = sheet.document;
+                const documentName = document.documentName;
+                GalleryUtils.gallery().then((Gallery) => {
+                    const options = {
+                        title: document.name,
+                        data: DataTransformer.retrieveCleanDocumentData(document),
+                        type: documentName,
+                    };
+                    if (documentName === 'Item' || documentName === 'Actor') {
+                        options.dependencies = [game.system.id];
+                    }
+                    Gallery.submit(options);
+                });
             },
-            {
-                label: 'Upload to Gallery',
-                icon: 'fa-fw fa-solid fa-cloud-arrow-up',
-                onClick: () => {
-                    const document = sheet.document;
-                    const documentName = document.documentName;
-                    GalleryUtils.gallery().then((Gallery) => {
-                        const options = {
-                            title: document.name,
-                            data: DataTransformer.retrieveCleanDocumentData(document),
-                            type: documentName,
-                        };
-                        if (documentName === 'Item' || documentName === 'Actor') {
-                            options.dependencies = [game.system.id];
-                        }
-                        Gallery.submit(options);
-                    });
-                },
-            },
-        );
+        });
     });
 }
