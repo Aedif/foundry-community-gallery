@@ -22,7 +22,7 @@ export class DataTransformer {
                 delete ef._stats;
                 DataTransformer.cleanFlags(ef);
             });
-        } else if (document.documentName === 'Drawing') {
+        } else if (document.documentName === 'Drawing' || document.documentName == 'Macro') {
             delete data.author;
         }
         // Cleanup flags of in-active modules

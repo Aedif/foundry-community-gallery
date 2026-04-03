@@ -10,7 +10,7 @@ export class ButtonInsertionSettings extends HandlebarsApplicationMixin(Applicat
     static DEFAULT_OPTIONS = {
         tag: 'form',
         window: {
-            title: game.i18n.localize('COMMUNITY_GALLERY.GalleryButtons.SettingLabel'),
+            title: 'COMMUNITY_GALLERY.GalleryButtons.SettingLabel',
             icon: 'fas fa-cog',
             contentClasses: ['standard-form'],
         },
