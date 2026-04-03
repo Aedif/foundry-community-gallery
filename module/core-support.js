@@ -1,7 +1,6 @@
 import { ButtonInsertionSettings } from './apps/buttonInsertion.js';
 import { GalleryUtils, DataTransformer } from './utils.js';
 
-export const DRAG_DROP_DIRECTORIES = ['RollTable', 'Macro', 'Item', 'Cards', 'JournalEntry', 'Actor'];
 export const SUPPORTED_PLACEABLES = [
     'AmbientLight',
     'Tile',
@@ -11,34 +10,13 @@ export const SUPPORTED_PLACEABLES = [
     'AmbientSound',
     'Region',
 ];
-export const SUPPORTED_DOCUMENTS = [...SUPPORTED_PLACEABLES, ...DRAG_DROP_DIRECTORIES];
+export const SUPPORTED_DOCUMENTS = [...SUPPORTED_PLACEABLES];
 
 /**
  * Register supporting hooks for core foundry document sheets
  */
 export function registerCoreSupport() {
     ButtonInsertionSettings.register();
-
-    // Document Directory drop listener
-    // Gallery entries dropped on directories will be created as documents within them
-    Hooks.on(`renderDocumentDirectory`, (app, html, context, options) => {
-        if (!DRAG_DROP_DIRECTORIES.includes(app.documentName)) return;
-
-        if (app._communityGalleryDropListener) return;
-        app._communityGalleryDropListener = true;
-
-        html.addEventListener('drop', async (event) => {
-            const data = foundry.applications.ux.TextEditor.implementation.getDragEventData(event);
-            if (data.type === 'CommunityGalleryEntry' && data.subtype === app.documentName) {
-                const entry = await GalleryUtils.resolveDropData(data);
-                if (!entry) return;
-                if (!GalleryUtils.verifyDependencies(entry)) return;
-                app.documentClass.createDocuments([foundry.utils.deepClone(entry.data)], {
-                    pack: app.collection.collection,
-                });
-            }
-        });
-    });
 
     // Canvas Drop hook
     // Entries subtyped as placeable documents will be created on canvas drop

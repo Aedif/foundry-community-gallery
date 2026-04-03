@@ -9,18 +9,12 @@ A supplementary module to https://gallery.aedif.net/, a gallery of user submitte
 
 Adds support for upload and browsing of the following documents:
 
-- RollTable
-- Macro
-- Item
-- Cards
-- JournalEntry
-- Actor
 - AmbientLight
+- AmbientSound
 - Tile
 - Drawing
 - MeasuredTemplate
 - Token
-- AmbientSound
 - Region
 
 The sheets/forms of these documents will have header controls added to them to open an upload form to allow document submission to the gallery:
@@ -31,13 +25,9 @@ Placeables such as Tiles and Ambient Lights will be inserted with a button to op
 
 <img width="307" height="250" alt="image" src="https://github.com/user-attachments/assets/4b07ee95-7052-43bf-be33-daa83f82f2e2" />
 
-Sidebar documents will have this button inserted near the search bar:
+Gallery entries can be dragged on to the canvas:
 
-<img width="auto" height="250" alt="image" src="https://github.com/user-attachments/assets/f510de17-1f2b-4c1f-a7d9-fc46ffca0f97" />
-
-Gallery entries can be dragged on to the canvas or document directory:
-
-https://github.com/user-attachments/assets/e5565250-9e40-4939-bbfd-ec933c5ec004
+TODO (RECORD VIDEO OF LIGHTS being dropped in)
 
 ## Developers
 

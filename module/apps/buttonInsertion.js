@@ -1,4 +1,4 @@
-import { DRAG_DROP_DIRECTORIES, SUPPORTED_DOCUMENTS, SUPPORTED_PLACEABLES } from '../core-support.js';
+import { SUPPORTED_DOCUMENTS, SUPPORTED_PLACEABLES } from '../core-support.js';
 import { GalleryUtils, MODULE_ID } from '../utils.js';
 
 const { HandlebarsApplicationMixin, ApplicationV2 } = foundry.applications.api;
@@ -121,31 +121,6 @@ export class ButtonInsertionSettings extends HandlebarsApplicationMixin(Applicat
                     },
                 };
             }
-        });
-
-        /* Insert browser buttons into the sidebar.  */
-        Hooks.on(`renderDocumentDirectory`, (app, html, context, options) => {
-            if (!DRAG_DROP_DIRECTORIES.includes(app.documentName)) return;
-            if (html.querySelector('.community-gallery-button')) return;
-
-            const enabledDocuments = game.settings.get(MODULE_ID, ButtonInsertionSettings.#settingKey);
-            if (!enabledDocuments[app.documentName]) return;
-
-            const searchEl = html.querySelector('.directory-header search');
-            if (!searchEl) return;
-
-            const button = document.createElement('button');
-            button.type = 'button';
-            button.classList.add('community-gallery-button', 'inline-control', 'icon', 'fa-solid', 'fa-globe');
-            button.dataset.tooltip = game.i18n.localize('COMMUNITY_GALLERY.GalleryButtons.ControlTooltip');
-
-            searchEl.appendChild(button);
-
-            button.addEventListener('click', () => {
-                GalleryUtils.gallery().then((Gallery) => {
-                    Gallery.browse({ filter: '@' + app.documentName });
-                });
-            });
         });
     }
 }

@@ -2,7 +2,7 @@
     "COMMUNITY_GALLERY": {
         "GalleryButtons": {
             "SettingLabel": "Gallery Buttons",
-            "SettingHint": "Configure gallery button insertion for the supported documents.",
+            "SettingHint": "Enable/Disable gallery buttons for the supported documents.",
             "ControlTooltip": "Community Gallery",
             "SheetUpload": "Upload to Gallery"
         }
