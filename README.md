@@ -27,7 +27,7 @@ Placeables such as Tiles and Ambient Lights will be inserted with a button to op
 
 Gallery entries can be dragged on to the canvas:
 
-TODO (RECORD VIDEO OF LIGHTS being dropped in)
+https://github.com/user-attachments/assets/c0b370fa-abfb-45f6-b7a8-ba834e586d30
 
 ## Developers
 
